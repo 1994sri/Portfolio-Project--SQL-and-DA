@@ -1,0 +1,102 @@
+
+
+select * from imdb
+
+
+ How many movies were released in 1994
+  select count(series_title) as totalcount,coalesce(released_year,'0') as yearrelease  from imdb group by Released_Year
+
+ How many movies have UA certificate 
+     select Certificate, Series_Title  from imdb where Certificate = 'UA' 
+
+How many movies have a Imdb rating of more than 8 
+Select sum(imdb_rating) as maxrating, Series_Title from imdb where IMDB_Rating > 8 group by IMDB_Rating , Series_Title
+
+Caegorise the movie as certificate A as good movie ,U As Unrestricted for public exhibition , UA Unrestricted but requires parental guidance, S Restricted to a special class of people
+Select series_title,
+Certificate,
+case
+           when Certificate = 'A' then 'Good Movie'
+           when Certificate = 'U' then 'Unrestricted'
+           when Certificate = 'UA' then 'Requires Parental Guidance'
+           when Certificate = 'R' then 'Reserved'
+           when Certificate = 'PG-13' then 'Parents Strongly Cautioned'
+           when Certificate = 'TV-14' then 'Children Ages 14 and Above'
+           when Certificate = 'Passed' then 'Passed Only for Persons 15 and Above'
+           else 'Fail'
+       end as Rating_Category
+from imdb;
+
+ how many movies have a imdb rating of less than 8 
+   SELECT series_title, IMDB_Rating
+FROM imdb
+WHERE IMDB_Rating < 8 group by Series_Title , IMDB_Rating 
+
+how many movies have meta score of more than 50
+   select series_title AS title_count, meta_score
+from imdb
+where meta_score IS NOT NULL
+  AND meta_score > 50
+
+how many movies have a meta score of less than 50 
+select series_title AS title_count, meta_score
+from imdb
+where meta_score IS NOT NULL
+  AND meta_score < 50
+
+how many movies have brad pitt pit in the cast 
+ select series_title, Star1, Star2, Star3, Star4
+from imdb
+where Star1 = 'Brad Pitt'
+   or Star2 = 'Brad Pitt'
+   or Star3 = 'Brad Pitt'
+   or Star4 = 'Brad Pitt'
+
+how many movies have AAmir khan in cast 
+select series_title, Star1, Star2, Star3, Star4
+from imdb
+where Star1 = 'Aamir Khan'
+   or Star2 = 'Aamir Khan'
+   or Star3 = 'Aamir Khan'
+   or Star4 = 'Aamir Khan'
+
+Rank the movie based on the number of votes 
+select series_title, No_of_Votes, dense_rank() over (order by No_of_Votes desc) as Rank from imdb;
+
+select series_title, IMDB_Rating,  row_number() over (order by IMDB_Rating desc) as numvotes FROM imdb;
+
+select series_title, IMDB_Rating, rank() over (order by IMDB_Rating desc) as movie_rank_by_votes from imdb;
+
+ create a list of first name of directors 
+select
+    case
+        When charindex(' ', Director) > 0 
+        Then substring(Director, 1, charindex(' ', Director) - 1)
+        Else Director  
+    End as first_name
+From imdb;
+
+which movie  the max and minumum votes  
+select series_title, no_of_votes , count(no_of_votes) from imdb group by Series_Title , No_of_Votes,
+       rank() over(order by count desc) AS movie_rank_by_votes
+FROM imdb;
+ 
+Which movie has the highest budget 
+     select series_title, max(budget_million) as maxbudget from Imdb group by  series_title;
+
+ which movie has lowest budget 
+
+select series_title, min(budget_million) as maxbudget from Imdb group by  series_title; 
+
+ How many mivies were released having 100 mn budget 
+    select series_title , budget_million from Imdb where budget_million > 100
+
+ How many movies were released between before 1950  
+
+    select series_title ,released_year from Imdb where released_year < 1950 
+ How many movies were released between 2000 and 2010  
+    
+    select series_title ,released_year from Imdb where released_year between 2000 and 2020
+
+
+
